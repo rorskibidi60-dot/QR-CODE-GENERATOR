@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QR Studio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+:root{--bg:#f6f2ea;--card:#fffdf9;--text:#1c1a16;--muted:#7a7468;--accent:#8a6422;--ink:#fff;--border:#e6dfd0;--field:#faf6ee;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0d0d11;--card:#16161c;--text:#f2eee6;--muted:#9a968c;--accent:#d9b673;--ink:#1a1405;--border:#2a2a33;--field:#1d1d25}}
+:root[data-theme="dark"]{--bg:#0d0d11;--card:#16161c;--text:#f2eee6;--muted:#9a968c;--accent:#d9b673;--ink:#1a1405;--border:#2a2a33;--field:#1d1d25}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5;
+background:radial-gradient(900px 420px at 85% -10%,color-mix(in srgb,var(--accent) 16%,transparent),transparent),var(--bg);background-color:var(--bg);min-height:100vh}
+.wrap{max-width:1040px;margin:0 auto;padding:28px 16px 56px}
+.eyebrow{font-size:.72rem;letter-spacing:.24em;color:var(--accent);font-weight:600}
+h1{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:2.1rem;line-height:1.15;margin:6px 0 6px}
+.sub{color:var(--muted);margin:0 0 24px;max-width:46ch}
+.grid{display:grid;gap:16px;grid-template-areas:"content" "pv" "style"}
+.c-content{grid-area:content}.pv{grid-area:pv}.c-style{grid-area:style}
+@media(min-width:860px){.grid{grid-template-columns:1fr 380px;grid-template-areas:"content pv" "style pv";align-items:start}
+.pv{position:sticky;top:calc(16px + env(safe-area-inset-top,0px))}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px;box-shadow:0 10px 30px -18px rgba(0,0,0,.35)}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px}
+.tab{white-space:nowrap;border:1px solid var(--border);background:transparent;color:var(--muted);padding:8px 14px;border-radius:999px;font:inherit;font-size:.85rem;cursor:pointer}
+.tab.on{background:var(--accent);color:var(--ink);border-color:var(--accent);font-weight:600}
+.f{margin-bottom:12px}.f:last-child{margin-bottom:0}
+.lb{display:block;font-size:.76rem;font-weight:600;color:var(--muted);margin-bottom:6px;letter-spacing:.02em}
+input[type=text],textarea,select{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:12px;background:var(--field);color:var(--text);font:inherit;font-size:.95rem}
+textarea{min-height:84px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.h{font-size:.76rem;color:var(--muted);margin-top:5px}
+.sec{font-family:Fraunces,Georgia,serif;font-size:1.1rem;margin:0 0 14px}
+.seg{display:flex;background:var(--field);border:1px solid var(--border);border-radius:12px;padding:3px;gap:2px}
+.seg button{flex:1;border:0;background:transparent;color:var(--muted);padding:8px 4px;border-radius:9px;font:inherit;font-size:.82rem;cursor:pointer}
+.seg button.on{background:var(--card);color:var(--text);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.22)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sws{display:flex;gap:10px;flex-wrap:wrap}
+.sw{width:34px;height:34px;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px var(--border);cursor:pointer;padding:0}
+.sw.on{box-shadow:0 0 0 2px var(--accent)}
+input[type=color]{width:100%;height:40px;border:1px solid var(--border);border-radius:12px;background:var(--field);padding:3px;cursor:pointer}
+.chk{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted);margin-top:8px;cursor:pointer}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.box{border-radius:16px;padding:14px;background:repeating-conic-gradient(#e9e6df 0 25%,#fff 0 50%) 0 0/16px 16px;position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+.box canvas{width:100%;height:100%;border-radius:8px;display:none}
+.ph{color:#77736a;text-align:center;font-size:.88rem;padding:20px;background:rgba(255,255,255,.85);border-radius:12px}
+.acts{display:flex;gap:10px;margin-top:14px}
+.btn{flex:1;padding:12px;border-radius:12px;border:1px solid var(--accent);font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;background:var(--accent);color:var(--ink)}
+.btn.g{background:transparent;color:var(--accent)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.note{font-size:.78rem;color:var(--muted);margin:10px 0 0;min-height:1.2em}
+.warn{color:#c2410c}
+.file{display:none}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:.85rem;opacity:0;pointer-events:none;transition:opacity .25s;max-width:90vw;text-align:center}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="eyebrow">QR STUDIO</div>
+<h1>Buat QR code yang elegan</h1>
+<p class="sub">Link, WiFi, WhatsApp, dan lainnya. Atur gaya, warna, dan logo, lalu unduh.</p>
+
+<div class="grid">
+<section class="card c-content">
+<div class="tabs" id="tabs"></div>
+<div id="fields"></div>
+</section>
+
+<aside class="card pv">
+<div class="box"><canvas id="cv"></canvas><div class="ph" id="ph">Isi data di samping, QR akan muncul di sini.</div></div>
+<div class="acts"><button class="btn" id="dpng" disabled>Unduh PNG</button><button class="btn g" id="dsvg" disabled>Unduh SVG</button></div>
+<p class="note" id="note"></p>
+</aside>
+
+<section class="card c-style">
+<h2 class="sec">Tampilan</h2>
+<div class="f"><span class="lb">Tema warna</span><div class="sws" id="sws"></div></div>
+<div class="two f">
+<div><span class="lb">Gaya titik</span><div class="seg" data-k="dot"><button data-v="square">Kotak</button><button data-v="rounded" class="on">Halus</button><button data-v="dot">Bulat</button></div></div>
+<div><span class="lb">Gaya mata</span><div class="seg" data-k="eye"><button data-v="square">Kotak</button><button data-v="rounded" class="on">Halus</button><button data-v="circle">Bulat</button></div></div>
+</div>
+<div class="two f">
+<div><span class="lb">Warna QR</span><input type="color" id="c1" value="#111111"><label class="chk"><input type="checkbox" id="gr"> Gradasi</label></div>
+<div><span class="lb">Warna kedua / latar</span><div class="two" style="gap:8px"><input type="color" id="c2" value="#111111" title="Warna gradasi"><input type="color" id="bg" value="#ffffff" title="Warna latar"></div><label class="chk"><input type="checkbox" id="tr"> Latar transparan</label></div>
+</div>
+<div class="f"><span class="lb">Level koreksi error</span><div class="seg" data-k="ec"><button data-v="L">L</button><button data-v="M" class="on">M</button><button data-v="Q">Q</button><button data-v="H">H</button></div></div>
+<div class="two f">
+<div><span class="lb">Margin: <b id="mgv">2</b></span><input type="range" id="mg" min="0" max="8" value="2"></div>
+<div><span class="lb">Ukuran unduhan</span><select id="px"><option value="512">512 px</option><option value="1024" selected>1024 px</option><option value="2048">2048 px</option></select></div>
+</div>
+<div class="f"><span class="lb">Logo di tengah</span>
+<div class="acts" style="margin-top:0"><button class="btn g" id="lg">Pilih gambar</button><button class="btn g" id="lgx" disabled>Hapus logo</button></div>
+<input class="file" type="file" id="lf" accept="image/*"><div class="h">Dengan logo, koreksi error otomatis diset ke H.</div></div>
+</section>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const S={type:'text',dot:'rounded',eye:'rounded',c1:'#111111',c2:'#111111',grad:false,bg:'#ffffff',transp:false,ec:'M',mg:2,px:1024,logo:null,logoUrl:''};
+const V={text:{},wifi:{e:'WPA'},mail:{},wa:{},tel:{}};
+const T={
+text:{l:'Link / Teks',f:[{k:'t',l:'Link atau teks',p:'https://contoh.com',m:1}]},
+wifi:{l:'WiFi',f:[{k:'s',l:'Nama WiFi (SSID)'},{k:'p',l:'Kata sandi'},{k:'e',l:'Keamanan',o:[['WPA','WPA / WPA2 / WPA3'],['WEP','WEP'],['nopass','Tanpa sandi']]}]},
+mail:{l:'Email',f:[{k:'a',l:'Alamat email',p:'nama@email.com'},{k:'s',l:'Subjek'},{k:'b',l:'Isi pesan',m:1}]},
+wa:{l:'WhatsApp',f:[{k:'n',l:'Nomor',p:'0812xxxxxxxx',h:'Awalan 0 otomatis diganti 62.'},{k:'m',l:'Pesan (opsional)',m:1}]},
+tel:{l:'Telepon',f:[{k:'n',l:'Nomor telepon',p:'+62812xxxxxxx'}]}};
+const PRE=[['#111111','#111111'],['#7a5c1e','#c9a24a'],['#0b3d91','#00a6a6'],['#c2185b','#f57c00'],['#14532d','#65a30d'],['#4c1d95','#db2777']];
+const EYE={square:[0,0,0],rounded:[1.8,1.2,.8],circle:[3.5,2.5,1.5]},DOT={square:[0,1],rounded:[.32,1],dot:[.42,.84]};
+let cur=null,tt;
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2600)};
+
+function text(){const v=V[S.type];
+ if(S.type==='text')return(v.t||'').trim();
+ if(S.type==='wifi'){if(!(v.s||'').trim())return'';const e=v.e||'WPA',x=s=>(s||'').replace(/([\\;,:"])/g,'\\$1');return'WIFI:T:'+e+';S:'+x(v.s)+';P:'+(e==='nopass'?'':x(v.p))+';;'}
+ if(S.type==='mail'){if(!(v.a||'').trim())return'';const q=[];if(v.s)q.push('subject='+encodeURIComponent(v.s));if(v.b)q.push('body='+encodeURIComponent(v.b));return'mailto:'+v.a.trim()+(q.length?'?'+q.join('&'):'')}
+ if(S.type==='wa'){let n=(v.n||'').replace(/\D/g,'');if(n[0]==='0')n='62'+n.slice(1);if(!n)return'';return'https://wa.me/'+n+(v.m?'?text='+encodeURIComponent(v.m):'')}
+ const n=(v.n||'').replace(/[^\d+]/g,'');return n?'tel:'+n:''}
+
+function rr(x,y,w,h,r){if(!r)return`M${x} ${y}h${w}v${h}h${-w}z`;r=Math.min(r,w/2,h/2);
+ return`M${x+r} ${y}H${x+w-r}A${r} ${r} 0 0 1 ${x+w} ${y+r}V${y+h-r}A${r} ${r} 0 0 1 ${x+w-r} ${y+h}H${x+r}A${r} ${r} 0 0 1 ${x} ${y+h-r}V${y+r}A${r} ${r} 0 0 1 ${x+r} ${y}Z`}
+
+function geo(qr){const n=qr.getModuleCount(),m=S.mg,N=n+2*m,L=S.logo?n*.22:0,b=(N-L)/2,[r0,sz]=DOT[S.dot],o=(1-sz)/2;let d='';
+ for(let r=0;r<n;r++)for(let c=0;c<n;c++){
+  if((r<7&&c<7)||(r<7&&c>=n-7)||(r>=n-7&&c<7)||!qr.isDark(r,c))continue;
+  if(L){const cx=c+m+.5,cy=r+m+.5;if(cx>b-.5&&cx<b+L+.5&&cy>b-.5&&cy<b+L+.5)continue}
+  d+=rr(c+m+o,r+m+o,sz,sz,r0)}
+ const[a,bb,p]=EYE[S.eye];
+ [[0,0],[n-7,0],[0,n-7]].forEach(([c,r])=>{const x=c+m,y=r+m;d+=rr(x,y,7,7,a)+rr(x+1,y+1,5,5,bb)+rr(x+2,y+2,3,3,p)});
+ return{d,N,L,b}}
+
+function fit(g){const I=S.logo,w=I.naturalWidth||100,h=I.naturalHeight||100,k=Math.min(g.L/w,g.L/h),dw=w*k,dh=h*k;return[g.b+(g.L-dw)/2,g.b+(g.L-dh)/2,dw,dh]}
+
+function paint(cv,px,g){const x=cv.getContext('2d');cv.width=cv.height=px;x.setTransform(px/g.N,0,0,px/g.N,0,0);
+ if(!S.transp){x.fillStyle=S.bg;x.fillRect(0,0,g.N,g.N)}
+ let f=S.c1;if(S.grad){f=x.createLinearGradient(0,0,g.N,g.N);f.addColorStop(0,S.c1);f.addColorStop(1,S.c2)}
+ x.fillStyle=f;x.fill(new Path2D(g.d),'evenodd');
+ if(S.logo){if(!S.transp){x.fillStyle=S.bg;x.fillRect(g.b-.3,g.b-.3,g.L+.6,g.L+.6)}x.drawImage(S.logo,...fit(g))}}
+
+function svg(g){const f=S.grad?'url(#g)':S.c1;let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${g.N} ${g.N}" width="${S.px}" height="${S.px}">`;
+ if(S.grad)s+=`<defs><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${g.N}" y2="${g.N}"><stop offset="0" stop-color="${S.c1}"/><stop offset="1" stop-color="${S.c2}"/></linearGradient></defs>`;
+ if(!S.transp)s+=`<rect width="${g.N}" height="${g.N}" fill="${S.bg}"/>`;
+ s+=`<path d="${g.d}" fill="${f}" fill-rule="evenodd"/>`;
+ if(S.logo){if(!S.transp)s+=`<rect x="${g.b-.3}" y="${g.b-.3}" width="${g.L+.6}" height="${g.L+.6}" fill="${S.bg}"/>`;const[x,y,w,h]=fit(g);s+=`<image href="${S.logoUrl}" x="${x}" y="${y}" width="${w}" height="${h}"/>`}
+ return s+'</svg>'}
+
+const lum=h=>{const c=[1,3,5].map(i=>{let v=parseInt(h.substr(i,2),16)/255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2]};
+const ratio=(a,b)=>{const x=lum(a),y=lum(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+
+function render(){const t=text(),cv=$('#cv'),note=$('#note');
+ const off=()=>{cv.style.display='none';$('#ph').style.display='';$('#dpng').disabled=$('#dsvg').disabled=true;cur=null};
+ if(!t){off();note.className='note';note.textContent='';return}
+ try{qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8'];const qr=qrcode(0,S.logo?'H':S.ec);qr.addData(t);qr.make();
+  const g=geo(qr);cur={g};paint(cv,640,g);cv.style.display='block';$('#ph').style.display='none';$('#dpng').disabled=$('#dsvg').disabled=false;
+  let w=[];if(!S.transp&&ratio(S.grad?S.c2:S.c1,S.bg)<3||!S.transp&&ratio(S.c1,S.bg)<3)w.push('Kontras warna rendah, QR bisa sulit dipindai.');
+  if(S.mg<2)w.push('Margin kecil bisa mengganggu pemindaian.');
+  note.className='note'+(w.length?' warn':'');note.textContent=w.join(' ')||'Coba pindai dulu sebelum dicetak.'}
+ catch(e){off();note.className='note warn';note.textContent='Isi terlalu panjang untuk dijadikan QR.'}}
+
+async function save(kind){if(!cur)return;
+ const d=window.claude?await window.claude.use('downloads'):null;
+ if(!d){toast('Unduh tidak tersedia di tampilan ini');return}
+ try{let data,name;
+  if(kind==='png'){const c=document.createElement('canvas');paint(c,S.px,cur.g);data=await new Promise(r=>c.toBlob(r,'image/png'));name='qr-code.png'}
+  else{data=svg(cur.g);name='qr-code.svg'}
+  const r=await d.save({filename:name,data});toast(r.status==='saved'?'Tersimpan':'Terkirim')}
+ catch(e){if(e&&e.code!=='declined')toast('Gagal menyimpan file')}}
+
+function tabs(){$('#tabs').innerHTML=Object.entries(T).map(([k,v])=>`<button class="tab${k===S.type?' on':''}" data-t="${k}">${v.l}</button>`).join('')}
+function fields(){const el=$('#fields');
+ el.innerHTML=T[S.type].f.map(f=>{const id='f_'+f.k;let i;
+  if(f.o)i=`<select id="${id}" data-f="${f.k}">${f.o.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select>`;
+  else if(f.m)i=`<textarea id="${id}" data-f="${f.k}" placeholder="${f.p||''}"></textarea>`;
+  else i=`<input type="text" id="${id}" data-f="${f.k}" placeholder="${f.p||''}" autocomplete="off">`;
+  return`<div class="f"><label class="lb" for="${id}">${f.l}</label>${i}${f.h?`<div class="h">${f.h}</div>`:''}</div>`}).join('');
+ T[S.type].f.forEach(f=>{const e=$('#f_'+f.k);if(V[S.type][f.k]!=null)e.value=V[S.type][f.k]})}
+
+$('#tabs').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;S.type=b.dataset.t;tabs();fields();render()});
+$('#fields').addEventListener('input',e=>{const k=e.target.dataset.f;if(!k)return;V[S.type][k]=e.target.value;render()});
+$$('.seg').forEach(s=>s.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S[s.dataset.k]=b.dataset.v;s.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));render()}));
+$('#sws').innerHTML=PRE.map((p,i)=>`<button class="sw" data-i="${i}" aria-label="Tema ${i+1}" style="background:linear-gradient(135deg,${p[0]},${p[1]})"></button>`).join('');
+$('#sws').addEventListener('click',e=>{const b=e.target.closest('.sw');if(!b)return;const p=PRE[b.dataset.i];S.c1=p[0];S.c2=p[1];S.grad=p[0]!==p[1];
+ $('#c1').value=p[0];$('#c2').value=p[1];$('#gr').checked=S.grad;$$('.sw').forEach(x=>x.classList.toggle('on',x===b));render()});
+$('#c1').oninput=e=>{S.c1=e.target.value;$$('.sw').forEach(x=>x.classList.remove('on'));render()};
+$('#c2').oninput=e=>{S.c2=e.target.value;render()};
+$('#bg').oninput=e=>{S.bg=e.target.value;render()};
+$('#gr').onchange=e=>{S.grad=e.target.checked;render()};
+$('#tr').onchange=e=>{S.transp=e.target.checked;render()};
+$('#mg').oninput=e=>{S.mg=+e.target.value;$('#mgv').textContent=S.mg;render()};
+$('#px').onchange=e=>{S.px=+e.target.value};
+$('#lg').onclick=()=>$('#lf').click();
+$('#lf').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
+ r.onload=()=>{const im=new Image();im.onload=()=>{S.logo=im;S.logoUrl=r.result;$('#lgx').disabled=false;render()};im.onerror=()=>toast('Gambar tidak bisa dibaca');im.src=r.result};r.readAsDataURL(f);e.target.value=''};
+$('#lgx').onclick=()=>{S.logo=null;S.logoUrl='';$('#lgx').disabled=true;render()};
+$('#dpng').onclick=()=>save('png');$('#dsvg').onclick=()=>save('svg');
+tabs();fields();render();
+</script>
+</body>
+</html>
